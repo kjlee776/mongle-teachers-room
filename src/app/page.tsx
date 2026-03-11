@@ -57,7 +57,7 @@ export default function Home() {
       } else {
         alert("비밀번호가 틀렸습니다.");
       }
-    } catch (_) {
+    } catch {
       alert("로그인 중 오류가 발생했습니다.");
     }
   };
