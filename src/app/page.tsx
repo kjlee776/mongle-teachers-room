@@ -16,6 +16,11 @@ export default function Home() {
   const [chatInput, setChatInput] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const [leftWidth, setLeftWidth] = useState(240);
+  const [rightWidth, setRightWidth] = useState(320);
+  const [isDraggingLeft, setIsDraggingLeft] = useState(false);
+  const [isDraggingRight, setIsDraggingRight] = useState(false);
+
   useEffect(() => {
     const fetchMenus = async () => {
       try {
@@ -33,6 +38,31 @@ export default function Home() {
     };
     fetchMenus();
   }, [activeMenuId]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDraggingLeft) {
+        setLeftWidth(Math.max(150, Math.min(e.clientX, window.innerWidth - rightWidth - 300)));
+      } else if (isDraggingRight) {
+        setRightWidth(Math.max(150, Math.min(window.innerWidth - e.clientX, window.innerWidth - leftWidth - 300)));
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingLeft(false);
+      setIsDraggingRight(false);
+    };
+
+    if (isDraggingLeft || isDraggingRight) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDraggingLeft, isDraggingRight, leftWidth, rightWidth]);
 
   const activeMenu = menus.find((m) => m.id === activeMenuId);
 
@@ -105,7 +135,21 @@ export default function Home() {
   };
 
   return (
-    <div className="app-container">
+    <div 
+      className={`app-container ${isDraggingLeft || isDraggingRight ? 'is-dragging' : ''}`}
+      style={{
+        "--left-width": `${leftWidth}px`,
+        "--right-width": `${rightWidth}px`
+      } as React.CSSProperties}
+    >
+      <div 
+        className={`resizer-left ${isDraggingLeft ? 'active' : ''}`} 
+        onMouseDown={(e) => { e.preventDefault(); setIsDraggingLeft(true); }}
+      />
+      <div 
+        className={`resizer-right ${isDraggingRight ? 'active' : ''}`} 
+        onMouseDown={(e) => { e.preventDefault(); setIsDraggingRight(true); }}
+      />
       {/* 1. Top Header */}
       <header className="pane-header">
         <div className="header-title">
