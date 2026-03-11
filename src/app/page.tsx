@@ -13,7 +13,6 @@ export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [menus, setMenus] = useState<Menu[]>([]);
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
-  const [chatInput, setChatInput] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   const [leftWidth, setLeftWidth] = useState(240);
@@ -98,7 +97,8 @@ export default function Home() {
     if (!title) return;
     const url = prompt("연결할 URL을 입력하세요:", "https://");
     if (!url) return;
-    const type = title.includes("페이지") ? "internal" : "external";
+    const isExternal = confirm("해당 메뉴가 외부 웹사이트(구글시트, 외부홈페이지 등)인가요?\n\n- 외부 사이트(iframe 연동)라면 [확인]을 눌러주세요.\n- 내부 페이지라면 [취소]를 눌러주세요.");
+    const type = isExternal ? "external" : "internal";
 
     try {
       const res = await fetch("/api/menus", {
@@ -267,44 +267,6 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* 5. Bottom (Chat) */}
-      <div className="pane-chat">
-        <div className="chat-container">
-          <div className="chat-input-wrapper">
-            <textarea
-              className="chat-input"
-              placeholder="무엇을 도와드릴까요? (NotebookLM 방식 대화)"
-              rows={2}
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  if (chatInput.trim()) {
-                    alert(`[샘플] AI 응답 시뮬레이션: "${chatInput}"에 대한 분석을 시작합니다.`);
-                    setChatInput('');
-                  }
-                }
-              }}
-            />
-          </div>
-          <div className="chat-actions">
-            <button className="icon-button" title="파일 첨부">📎</button>
-            <button 
-              className="btn btn-primary" 
-              style={{ borderRadius: "20px", padding: "6px 16px" }}
-              onClick={() => {
-                if (chatInput.trim()) {
-                  alert(`[샘플] AI 응답 시뮬레이션: "${chatInput}"에 대한 분석을 시작합니다.`);
-                  setChatInput('');
-                }
-              }}
-            >
-              전송 ↗
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
