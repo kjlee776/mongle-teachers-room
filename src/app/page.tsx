@@ -17,23 +17,22 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchMenus();
-  }, []);
-
-  const fetchMenus = async () => {
-    try {
-      const res = await fetch("/api/menus");
-      const data = await res.json();
-      setMenus(data);
-      if (data.length > 0 && !activeMenuId) {
-        setActiveMenuId(data[0].id);
+    const fetchMenus = async () => {
+      try {
+        const res = await fetch("/api/menus");
+        const data = await res.json();
+        setMenus(data);
+        if (data.length > 0 && !activeMenuId) {
+          setActiveMenuId(data[0].id);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+    fetchMenus();
+  }, [activeMenuId]);
 
   const activeMenu = menus.find((m) => m.id === activeMenuId);
 
@@ -58,7 +57,7 @@ export default function Home() {
       } else {
         alert("비밀번호가 틀렸습니다.");
       }
-    } catch (e) {
+    } catch (_) {
       alert("로그인 중 오류가 발생했습니다.");
     }
   };
@@ -184,7 +183,7 @@ export default function Home() {
                 <h2 style={{ color: "var(--color-text-primary)", marginBottom: "16px" }}>{activeMenu.title}</h2>
                 <div style={{ padding: "24px", backgroundColor: "var(--color-bg-primary)", borderRadius: "8px", display: "inline-block", textAlign: "left" }}>
                   <p><strong>URL 연결:</strong> {activeMenu.url}</p>
-                  <p style={{ marginTop: "12px" }}>위 URL이 외부 사이트라면 메뉴 추가 시 제목에 "페이지"라는 단어를 빼고 생성해보세요. <br/>그러면 iframe으로 렌더링 됩니다.</p>
+                  <p style={{ marginTop: "12px" }}>위 URL이 외부 사이트라면 메뉴 추가 시 제목에 &quot;페이지&quot;라는 단어를 빼고 생성해보세요. <br/>그러면 iframe으로 렌더링 됩니다.</p>
                 </div>
               </div>
             )
