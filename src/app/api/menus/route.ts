@@ -26,9 +26,9 @@ export async function POST(request: Request) {
       args: [title, type, url]
     });
 
-    return NextResponse.json({ id: result.lastInsertRowid, title, type, url }, { status: 201 });
+    return NextResponse.json({ id: Number(result.lastInsertRowid), title, type, url }, { status: 201 });
   } catch (error) {
     console.error("Failed to create menu", error);
-    return NextResponse.json({ error: "Failed to create menu", details: String(error) }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create menu" }, { status: 500 });
   }
 }
